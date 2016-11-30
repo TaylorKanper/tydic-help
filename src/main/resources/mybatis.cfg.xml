@@ -3,6 +3,6 @@
 <configuration>    
 	<typeAliases>
 		<!-- 如果还有其余的映射类,则继续添加 -->
-
+		<typeAlias type="com.tydic.bean.NodeBean" alias="node"></typeAlias>
 	</typeAliases>
 </configuration>  
