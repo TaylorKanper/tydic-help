@@ -87,7 +87,7 @@ $(function() {
       msgs.err.hide();
     },
     uploadFinished: function(i, file, response, time) {
-      $md.val($md.val() + "![" + file.name + "](http://127.0.0.1:8080/markdown/img/"+file.name+")\n").trigger('change');
+      $md.val($md.val() + "![" + file.name + "](http://127.0.0.1:8080/markdown/img/"+response+")\n").trigger('change');
       // response is the data you got back from server in JSON format.
     }
   });

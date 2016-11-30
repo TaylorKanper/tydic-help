@@ -22,7 +22,7 @@
 <div class="row">
     <div class="col-md-12">
         <h1>Bootstrap Markdown DEMO</h1>
-        <textarea id="comment-md" name="comment" placeholder="Say something..."></textarea>
+        <textarea id="comment-md" name="comment" placeholder="请输入内容.........."></textarea>
         <br/>
         <div id="comment-md-preview-container">
             <div class="well well-sm well-light md-preview margin-top-10" id="comment-md-preview"></div>
