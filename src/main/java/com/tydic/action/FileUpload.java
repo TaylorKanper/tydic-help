@@ -9,7 +9,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 /**
