@@ -10,9 +10,9 @@
 		<result column="update_time" property="updateTime" />
 		<result column="context" property="context" />
 		<result column="f_id" property="fatherId" />
-		<result column="nodeName" property="nodeName" />
-		<result column="user_id" property="userId" />
-		<result column="user_name" property="userName" />
+		<result column="n_name" property="nodeName" />
+		<result column="u_id" property="userId" />
+		<result column="u_name" property="userName" />
 		<result column="symbol" property="effective" />
 	</resultMap>
 
