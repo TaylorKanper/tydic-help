@@ -20,10 +20,9 @@ public interface INodeDao {
      * 查找获取节点信息
      *
      * @param id       节点id
-     * @param fatherId 父节点id
      * @return 节点信息
      */
-    NodeBean findNode(@Param("id") int id, @Param("fatherId") int fatherId);
+    NodeBean findNode(int id);
 
     /**
      * 插入节点
@@ -31,4 +30,12 @@ public interface INodeDao {
      * @return 插入条数
      */
     int insertNode(NodeBean bean);
+
+    /**
+     * 修改叶子节点信息
+     * @param bean 叶子节点实体
+     * @return 影响数据库条数
+     */
+    int updateNode(NodeBean bean);
+
 }

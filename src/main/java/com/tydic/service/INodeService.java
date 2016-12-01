@@ -20,11 +20,10 @@ public interface INodeService {
     /**
      * 根据节点id，和父节点id获取该节点的详细内容
      *
-     * @param id       节点id
-     * @param fatherId 父节点id
+     * @param id 节点id
      * @return 该节点的详细内容
      */
-    Response<NodeBean> findNodes(int id, int fatherId);
+    Response<NodeBean> findNodes(int id);
 
     /**
      * 向数据库插入节点
@@ -33,4 +32,20 @@ public interface INodeService {
      * @return 是否插入成功
      */
     Response<Boolean> insertNode(NodeBean bean);
+
+    /**
+     * 根据实体中的id修改叶子节点
+     *
+     * @param bean 叶子节点实体
+     * @return 是否修改成功
+     */
+    Response<Boolean> updateNode(NodeBean bean);
+
+    /**
+     * 按照id删除叶子节点
+     *
+     * @param id 被删除的叶子节点id
+     * @return 是否删除成功
+     */
+    Response<Boolean> delNode(int id);
 }

@@ -1,31 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper    
-    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tydic.dao.INodeDao">
 
-	<resultMap type="node" id="nodeMap">
-		<id column="id" property="id" />
-		<result column="insert_time" property="insertTime" />
-		<result column="update_time" property="updateTime" />
-		<result column="context" property="context" />
-		<result column="f_id" property="fatherId" />
-		<result column="n_name" property="nodeName" />
-		<result column="u_id" property="userId" />
-		<result column="u_name" property="userName" />
-		<result column="symbol" property="effective" />
-	</resultMap>
+    <resultMap type="node" id="nodeMap">
+        <id column="id" property="id"/>
+        <result column="insert_time" property="insertTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="context" property="context"/>
+        <result column="f_id" property="fatherId"/>
+        <result column="n_name" property="nodeName"/>
+        <result column="u_id" property="userId"/>
+        <result column="u_name" property="userName"/>
+        <result column="symbol" property="effective"/>
+    </resultMap>
 
-	<select id="findAll" resultMap="nodeMap">
+    <select id="findAll" resultMap="nodeMap">
 		SELECT id,insert_time,insert_time,update_time,f_id,n_name,u_id,u_name,symbol FROM t_node
 	</select>
 
-	<select id="findNode" resultMap="nodeMap">
-		SELECT * FROM  t_node WHERE f_id=#{fatherId} AND id=#{id}
+    <select id="findNode" resultMap="nodeMap">
+		SELECT * FROM  t_node WHERE id=#{id}
 	</select>
 
-	<insert id="insertNode" parameterType="node">
+    <insert id="insertNode" parameterType="node">
 		INSERT INTO t_node(insert_time,update_time,context,f_id,n_name,u_id,u_name,symbol)
 		VALUES (#{insertTime},#{updateTime},#{context},#{fatherId},#{nodeName},#{userId},#{userName},#{effective})
 	</insert>
+    <update id="updateNode" parameterType="node">
+        UPDATE t_node SET
+        <if test="updateTime !=null ">
+            update_time = {updateTime}
+        </if>
+        <if test="context !=null ">
+            context = {context}
+        </if>
+        <if test="nodeName !=null ">
+            n_name = {nodeName}
+        </if>
+        <if test="effective != 0">
+            symbol = {effective}
+        </if>
+        WHERE id=#{id}
+    </update>
 </mapper>
