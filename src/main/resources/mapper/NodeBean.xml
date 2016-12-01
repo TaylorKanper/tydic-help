@@ -17,7 +17,7 @@
 	</resultMap>
 
 	<select id="findAll" resultMap="nodeMap">
-		SELECT id,insert_time,insert_time,update_time,f_id,nodeName,user_id,user_name,symbol FROM t_node
+		SELECT id,insert_time,insert_time,update_time,f_id,n_name,u_id,u_name,symbol FROM t_node
 	</select>
 
 	<select id="findNode" resultMap="nodeMap">
@@ -25,7 +25,7 @@
 	</select>
 
 	<insert id="insertNode" parameterType="node">
-		INSERT INTO t_node(insert_time,update_time,context,f_id,nodeName,user_id,user_name,symbol)
+		INSERT INTO t_node(insert_time,update_time,context,f_id,n_name,u_id,u_name,symbol)
 		VALUES (#{insertTime},#{updateTime},#{context},#{fatherId},#{nodeName},#{userId},#{userName},#{effective})
 	</insert>
 </mapper>
