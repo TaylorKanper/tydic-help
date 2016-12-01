@@ -25,7 +25,7 @@ public class NodeAction {
      *
      * @return 所有节点信息
      */
-    @RequestMapping("findAllNodes")
+    @RequestMapping("/findAllNodes")
     public ActionResult findAllNodes() {
         Response<List<NodeBean>> response = nodeService.findAllNodes();
         if (response.isOk()) {
@@ -42,7 +42,7 @@ public class NodeAction {
      * @param id 叶子节点的id
      * @return 叶子节点的信息
      */
-    @RequestMapping("findNode")
+    @RequestMapping("/findNode")
     public ActionResult findNode(int id) {
         Response<NodeBean> response = nodeService.findNodes(id);
         if (response.isOk()) {
@@ -57,7 +57,7 @@ public class NodeAction {
      * @param bean 叶子节点实体
      * @return 是否修改成功
      */
-    @RequestMapping("updateNode")
+    @RequestMapping("/updateNode")
     public ActionResult updateNode(NodeBean bean) {
         Response<Boolean> response = nodeService.updateNode(bean);
         if (response.isOk()) {
@@ -73,7 +73,7 @@ public class NodeAction {
      * @param bean 叶子节点实体
      * @return 是否添加成功
      */
-    @RequestMapping("addNode")
+    @RequestMapping("/addNode")
     public ActionResult addNode(NodeBean bean) {
         Response<Boolean> response = nodeService.insertNode(bean);
         if (response.isOk()) {
@@ -88,7 +88,7 @@ public class NodeAction {
      * @param id 该叶子节点的id
      * @return 是否删除成功
      */
-    @RequestMapping("delNode")
+    @RequestMapping("/delNode")
     public ActionResult delNode(int id){
         Response<Boolean> response = nodeService.delNode(id);
         if (response.isOk()) {
