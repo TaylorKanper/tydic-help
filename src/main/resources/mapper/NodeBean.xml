@@ -31,16 +31,16 @@
     <update id="updateNode" parameterType="node">
         UPDATE t_node SET
         <if test="updateTime !=null ">
-            update_time = {updateTime}
+            update_time = #{updateTime}
         </if>
         <if test="context !=null ">
-            context = {context}
+            context = #{context}
         </if>
         <if test="nodeName !=null ">
-            n_name = {nodeName}
+            n_name = #{nodeName}
         </if>
         <if test="effective != 0">
-            symbol = {effective}
+            symbol = #{effective}
         </if>
         WHERE id=#{id}
     </update>
