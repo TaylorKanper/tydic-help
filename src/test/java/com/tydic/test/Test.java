@@ -22,7 +22,8 @@ public class Test {
 	@org.junit.Test
 	public void test() {
 		try {
-			insertNode();
+//			insertNode();
+			delNode(3);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -40,5 +41,7 @@ public class Test {
 		Response<Boolean> res = nodeService.insertNode(bean);
 		System.out.print(res);
 	}
-
+	private void delNode(int id){
+		nodeService.delNode(id);
+	}
 }
