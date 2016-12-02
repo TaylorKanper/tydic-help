@@ -6,6 +6,7 @@ import com.tydic.common.Response;
 import com.tydic.service.INodeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -26,6 +27,7 @@ public class NodeAction {
      * @return 所有节点信息
      */
     @RequestMapping("/findAllNodes")
+    @ResponseBody
     public ActionResult findAllNodes() {
         Response<List<NodeBean>> response = nodeService.findAllNodes();
         if (response.isOk()) {
@@ -43,6 +45,7 @@ public class NodeAction {
      * @return 叶子节点的信息
      */
     @RequestMapping("/findNode")
+    @ResponseBody
     public ActionResult findNode(int id) {
         Response<NodeBean> response = nodeService.findNodes(id);
         if (response.isOk()) {
@@ -58,6 +61,7 @@ public class NodeAction {
      * @return 是否修改成功
      */
     @RequestMapping("/updateNode")
+    @ResponseBody
     public ActionResult updateNode(NodeBean bean) {
         Response<Boolean> response = nodeService.updateNode(bean);
         if (response.isOk()) {
@@ -74,6 +78,7 @@ public class NodeAction {
      * @return 是否添加成功
      */
     @RequestMapping("/addNode")
+    @ResponseBody
     public ActionResult addNode(NodeBean bean) {
         Response<Boolean> response = nodeService.insertNode(bean);
         if (response.isOk()) {
@@ -89,6 +94,7 @@ public class NodeAction {
      * @return 是否删除成功
      */
     @RequestMapping("/delNode")
+    @ResponseBody
     public ActionResult delNode(int id){
         Response<Boolean> response = nodeService.delNode(id);
         if (response.isOk()) {
