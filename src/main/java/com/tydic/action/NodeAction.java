@@ -47,7 +47,23 @@ public class NodeAction {
     @RequestMapping("/findNode")
     @ResponseBody
     public ActionResult findNode(int id) {
-        Response<NodeBean> response = nodeService.findNodes(id);
+        Response<NodeBean> response = nodeService.findNode(id);
+        if (response.isOk()) {
+            return ActionResult.success("成功", response.getResult());
+        }
+        return ActionResult.fail("查询失败");
+    }
+
+    /**
+     * 提供id获取该叶子节点信息
+     *
+     * @param fid 父叶子节点的id
+     * @return 叶子节点的信息
+     */
+    @RequestMapping("/findNodesByFather")
+    @ResponseBody
+    public ActionResult findNodesByFather(int fid) {
+        Response<List<NodeBean>> response = nodeService.findNodesByFather(fid);
         if (response.isOk()) {
             return ActionResult.success("成功", response.getResult());
         }
@@ -90,12 +106,13 @@ public class NodeAction {
 
     /**
      * 删除某个叶子节点
+     *
      * @param id 该叶子节点的id
      * @return 是否删除成功
      */
     @RequestMapping("/delNode")
     @ResponseBody
-    public ActionResult delNode(int id){
+    public ActionResult delNode(int id) {
         Response<Boolean> response = nodeService.delNode(id);
         if (response.isOk()) {
             return ActionResult.success("删除成功");

@@ -1,6 +1,7 @@
 package com.tydic.dao;
 
 import com.tydic.bean.NodeBean;
+import com.tydic.common.Response;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -38,4 +39,10 @@ public interface INodeDao {
      */
     int updateNode(NodeBean bean);
 
+    /**
+     * 查询所有父节点下的所有子节点
+     * @param fid 父节点id
+     * @return 所有子节点
+     */
+    List<NodeBean> findNodesByFather(int fid);
 }
