@@ -25,8 +25,8 @@
 	</select>
 
     <insert id="insertNode" parameterType="node">
-		INSERT INTO t_node(insert_time,update_time,context,f_id,n_name,u_id,u_name,symbol)
-		VALUES (#{insertTime},#{updateTime},#{context},#{fatherId},#{nodeName},#{userId},#{userName},#{effective})
+		INSERT INTO t_node(id,insert_time,update_time,context,f_id,n_name,u_id,u_name,symbol)
+		VALUES (#{id},#{insertTime},#{updateTime},#{context},#{fatherId},#{nodeName},#{userId},#{userName},#{effective})
 	</insert>
     <update id="updateNode" parameterType="node">
         UPDATE t_node SET

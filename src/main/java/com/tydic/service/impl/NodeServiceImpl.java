@@ -47,6 +47,7 @@ public class NodeServiceImpl implements INodeService {
     @Override
     public Response<Boolean> insertNode(NodeBean bean) {
         try {
+            bean.setInsertTime(new Date(System.currentTimeMillis()));
             bean.setEffective(1);
             return nodeDao.insertNode(bean) >= 1 ? Response.ok(true) : Response.ok(false);
         } catch (Exception e) {
