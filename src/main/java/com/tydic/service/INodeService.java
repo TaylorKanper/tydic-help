@@ -23,7 +23,7 @@ public interface INodeService {
      * @param id 节点id
      * @return 该节点的详细内容
      */
-    Response<NodeBean> findNodes(int id);
+    Response<NodeBean> findNode(int id);
 
     /**
      * 向数据库插入节点
@@ -48,4 +48,11 @@ public interface INodeService {
      * @return 是否删除成功
      */
     Response<Boolean> delNode(int id);
+
+    /**
+     * 根据父节点id查找该父节点下所有的子节点，不包括子节点下的根子节点，即只查询一级
+     * @param fid 父节点id
+     * @return 子节点集合
+     */
+    Response<List<NodeBean>> findNodesByFather(int fid);
 }

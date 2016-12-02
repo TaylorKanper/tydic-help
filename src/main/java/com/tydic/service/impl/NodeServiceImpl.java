@@ -33,7 +33,7 @@ public class NodeServiceImpl implements INodeService {
     }
 
     @Override
-    public Response<NodeBean> findNodes(int id) {
+    public Response<NodeBean> findNode(int id) {
 
         try {
             return Response.ok(nodeDao.findNode(id));
@@ -52,6 +52,7 @@ public class NodeServiceImpl implements INodeService {
             return nodeDao.insertNode(bean) >= 1 ? Response.ok(true) : Response.ok(false);
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e.getMessage());
             return Response.fail(e.getMessage());
         }
     }
@@ -63,6 +64,7 @@ public class NodeServiceImpl implements INodeService {
             return nodeDao.updateNode(bean) >= 1 ? Response.ok(true) : Response.ok(false);
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e.getMessage());
             return Response.fail(e.getMessage());
         }
 
@@ -77,6 +79,19 @@ public class NodeServiceImpl implements INodeService {
             return nodeDao.updateNode(bean) >= 1 ? Response.ok(true) : Response.ok(false);
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e.getMessage());
+            return Response.fail(e.getMessage());
+        }
+    }
+
+    @Override
+    public Response<List<NodeBean>> findNodesByFather(int fid) {
+        try {
+            List<NodeBean> list = nodeDao.findNodesByFather(fid);
+            return list.size() > 0 ? Response.ok(list) : Response.fail(list, "该父节点没有子节点");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
             return Response.fail(e.getMessage());
         }
     }

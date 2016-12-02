@@ -44,4 +44,7 @@
         </if>
         WHERE id=#{id}
     </update>
+    <select id="findNodesByFather" resultMap="nodeMap">
+        SELECT * FROM  t_node WHERE f_id=#{fid}
+    </select>
 </mapper>
