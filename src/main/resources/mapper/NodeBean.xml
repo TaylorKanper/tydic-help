@@ -29,7 +29,7 @@
 		VALUES (#{id},#{insertTime},#{updateTime},#{context},#{fatherId},#{nodeName},#{userId},#{userName},#{effective})
 	</insert>
     <update id="updateNode" parameterType="node">
-        UPDATE t_node SET
+        UPDATE t_node
         <set>
         <if test="updateTime !=null ">
             update_time = #{updateTime},
