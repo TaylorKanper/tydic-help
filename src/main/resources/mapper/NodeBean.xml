@@ -30,6 +30,7 @@
 	</insert>
     <update id="updateNode" parameterType="node">
         UPDATE t_node SET
+        <set>
         <if test="updateTime !=null ">
             update_time = #{updateTime},
         </if>
@@ -42,6 +43,7 @@
         <if test="effective != 0">
             symbol = #{effective},
         </if>
+        </set>
         WHERE id=#{id}
     </update>
     <select id="findNodesByFather" resultMap="nodeMap">
