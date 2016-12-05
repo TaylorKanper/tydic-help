@@ -2,44 +2,36 @@
  * Created by xiaocai on 2016/11/14.
  */
 $(function(){
-    tools.clickOtherNone();
     makeTree.makeT();
     makeTree.makeTreeOther();
-    makeDom.editBox();
     makeDom.signEdit();
     makeDom.webpreview();
     makeDom.inEdit();
+    makeDom.editBox();
+
 })
 var tools = {
-    clickOtherNone:function(){
-        $("#wrap").click(function(e){
-            $("#wrap").show();
-            var ev = e || window.event;
-            if(ev.stopPropagation){
-                ev.stopPropagation();
-            } else if(window.event){
-                window.event.cancelBubble = true;//兼容IE
-            }
-        })
-        document.onclick = function(){
-            $("#wrap").hide();
-        }
-        $("#wrap").click(function(e){
-            var ev = e || window.event;
-            if(ev.stopPropagation){
-                ev.stopPropagation();
-            }
-            else if(window.event){
-                window.event.cancelBubble = true;//兼容IE
-            }
-        })
-    },
     setPreviewCount:function(eventObj,dom){
         var content = eventObj.parseContent();
         if (content === '') dom.show();
         else dom.show().find('#comment-md-preview').html(content).find('table').addClass('table table-bordered table-striped table-hover');
     },
-    ajaxGetCount:[{id:123,count:"这里的内容是模拟的从后面获取得到的"}],
+    ajaxGetCount:function(serverData){
+        if(serverData) {
+            for (var k = 0, lenk = serverData.data.length; k < lenk; k++) {
+                $.each($("#main .template:not(:first)"), function (kd, n) {
+                    if ($(n).attr("data-id") == serverData.data[k].id) {
+                        $(n).html( tools.markDownEObj.parseContent(serverData.data[k].context))
+                    }
+                })
+            }
+        }
+    },
+    markDownEObj:null,
+    treeModify:{},
+    treeAdd:{},
+    addOrModify:"modify",
+    treeNodeCount:[],
 };
 var makeTree = {
     makeT:function(){
@@ -68,13 +60,42 @@ var makeTree = {
                 onRemove: onRemove,
                 onRename: onRename,
                 onClick:function(event, treeId, treeNode){
+                    console.log(treeNode)
                     $.each($("#main .template:not(:first)"),function(i,n){
                         if($(n).attr("data-id") == treeNode.id){
                             $(n).show();
                         }else{
                             $(n).hide();
                         }
-                    })
+                    });
+                    if(treeNode.children){
+                        var currentTree = treeNode.children;
+                        for(var i=0,len=currentTree.length;i<len;i++){
+                            if(!currentTree[i].isParent){
+                                $.ajax({
+                                    url:"http://localhost:8080/markdown/node/findNodesByFather.do",
+                                    data:{fid:treeNode.id},
+                                    success:function(data){
+                                        console.log(data)
+                                        makeDom.editBox(data);
+                                        for(var a = 0;a<data.data.length;a++){
+                                            var treeNodeCountObj = {};
+                                            treeNodeCountObj.id = data.data[a].id;
+                                            treeNodeCountObj.count = data.data[a].context;
+                                            tools.treeNodeCount.push(treeNodeCountObj);
+                                            if(tools.markDownEObj){
+                                                tools.ajaxGetCount(data)
+                                            }
+                                        }
+                                    }
+                                })
+                                break;
+                            }else{
+                                //makeDom.editBox = null;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         };
@@ -93,7 +114,6 @@ var makeTree = {
                         zTree.editName(treeNode);
                         $("#edit").show();
                     }, 0);
-
                 }
             }, 0);
             return false;
@@ -110,6 +130,14 @@ var makeTree = {
                         $(n).detach();
                     }
                 })
+                console.log(treeNode)
+               $.ajax({
+                   url:"http://localhost:8080/markdown/node/delNode.do",
+                   data:{id:treeNode.id},
+                   success:function(data){
+                        console.log(data)
+                   }
+               })
             }
             return removeBool;
         }
@@ -131,21 +159,30 @@ var makeTree = {
         }
         function onRename(e, treeId, treeNode, isCancel) {
             showLog((isCancel ? "<span style='color:red'>":"") + "[ "+getTime()+" onRename ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name + (isCancel ? "</span>":""));
-        }
-        /*function showRemoveBtn(treeId, treeNode) {
-            return !treeNode.isFirstNode;
-        }*/
-        /*function showRenameBtn(treeId, treeNode) {
-            console.log(treeNode)
-            return !treeNode.isLastNode;
-        }*/
+            tools.treeModify.id = treeNode.id;
+            tools.treeModify.fatherId = treeNode.getParentNode().id;
+            tools.treeModify.name = treeNode.name;
+            $.each($("#main .template:not(:first)"),function(i,n){
+                if($(n).attr("data-id") == treeNode.id){
+                    tools.treeModify.count = $(n).html();
+                };
+            })
+            tools.addOrModify = "modify";
+            if(tools.addOrModify === "modify"){
+                $.each(tools.treeNodeCount,function(i,n){
+                    if(n.id === tools.treeModify.id){
+                        tools.markDownEObj.setContent(n.count)
+                    }
+                })
+            }
+        };
         function showLog(str) {
             if (!log) log = $("#log");
             log.append("<li class='"+className+"'>"+str+"</li>");
             if(log.children("li").length > 8) {
                 log.get(0).removeChild(log.children("li")[0]);
             }
-        }
+        };
         function getTime() {
             var now= new Date(),
                 h=now.getHours(),
@@ -163,13 +200,25 @@ var makeTree = {
             sObj.after(addStr);
             var btn = $("#addBtn_"+treeNode.tId);
             if (btn) btn.bind("click", function(){
+
+                var addNodes = treeNode.id+"1";
+                if(treeNode.isParent){
+                    addNodes = Number(treeNode.children[treeNode.children.length-1].id)+1
+                }else{
+                    var addNodes = treeNode.id+"1";
+                }
+                tools.treeAdd.id = addNodes;
                 var zTree = $.fn.zTree.getZTreeObj("treeDemo");
                 var appendDom = $("#main .template:first").clone(true);
-                appendDom.attr("data-id",(100 + newCount));
+                appendDom.attr("data-id",(addNodes));
                 appendDom.text("new node" + (newCount));
                 appendDom.show().siblings().hide();
                 $("#main").append(appendDom);
-                zTree.addNodes(treeNode, {id:(100 + newCount), pId:treeNode.id, name:"new node" + (newCount++)});
+                zTree.addNodes(treeNode, {id:(addNodes), pId:treeNode.id, name:"new node" + (newCount++)});
+               // tools.treeAdd.id = treeNode.id;
+               // tools.treeAdd.tId = treeNode.getParentNode().id;
+                tools.addOrModify = "add";
+                $("#edit").show();
                 return false;
             });
         };
@@ -181,7 +230,7 @@ var makeTree = {
             zTree.setting.edit.editNameSelectAll =  $("#selectAll").attr("checked");
         };
     var zNodes =[//ztree的数据格式
-        { id:1, pId:0, name:"概述", open:true},
+        /*{ id:1, pId:0, name:"概述", open:true},
         { id:111, pId:1, name:"封面"},
         { id:112, pId:1, name:"目录"},
         { id:113, pId:1, name:"修改记录"},
@@ -212,13 +261,24 @@ var makeTree = {
         { id:232, pId:23, name:"叶子节点232"},
         { id:233, pId:23, name:"叶子节点233"},
         { id:234, pId:23, name:"叶子节点234"},
-        { id:3, pId:0, name:"结语", isParent:true}
+        { id:3, pId:0, name:"结语", isParent:true}*/
     ];
-    var treeObj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
-    var allNodes = zNodes;
-        for(var i=0,len=allNodes.length;i<len;i++){
-                makeDom.produceDom(allNodes[i].id,allNodes[i].name)
+    $.ajax({
+        url:"http://localhost:8080/markdown/node/findAllNodes.do",
+        success: function(data){
+            var server = data.data;
+            console.log(data)
+            for(var i=0,len=server.length;i<len;i++){
+                var treeObj = {};
+                treeObj.id = server[i].id;
+                treeObj.pId = server[i].fatherId;
+                treeObj.name = server[i].nodeName;
+                makeDom.produceDom(server[i].id)//带删除长度和idnex
+                zNodes.push(treeObj);
+             }
+            var treeObj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
         }
+    })
 },
     makeTreeOther:function(){
         $("#wrap li").on("click",function(){//点击隐藏操作器
@@ -227,34 +287,82 @@ var makeTree = {
     }
 };
 var makeDom = {
-        produceDom:function(id,count){
+        produceDom:function(id){
            var dom =  $("#main .template:first").clone(true);
-            $(dom).html(count)
+           // $(dom).html(count)
             $(dom).attr("data-id",id)
             $(dom).hide();
             $("#main").append(dom)
         },
-        editBox:function(){
+        editBox:function(serverData){
             var $previewContainer = $('#comment-md-preview-container');
-            $previewContainer.hide();
+            $previewContainer.show();
             var $md = $("#comment-md").markdown({
                 autofocus: false,
                 height: 510,
                 width:600,
                 iconlibrary: 'fa',
+                savable:true,
                 onShow: function(e) {
-                    var addConunt = "#后面加入的内容测试初始化"//在这里把请求来的数据 格式化为html
+                    tools.markDownEObj = e;
+                    console.log(e)
+                    console.log("是否触发show")
                     e.change(e);
-                    //string content
-                    e.setContent(addConunt)
-                   // $("#main .template").eq(0).html(e.parseContent());//初始化在页面的格式
-                    tools.setPreviewCount(e,$previewContainer)
+                   tools.ajaxGetCount(serverData)
+                    tools.setPreviewCount(e,$previewContainer);
+
+                    if(serverData){
+                        e.hidePreview();
+                        return false;
+                    }
                 },
                 onPreview: function(e) {//预览时
-                  //  console.log(e.$textarea[0].disabled)
                     $("#edit").hide();
                     $("#inedit").show();
-                    $("#main .template").eq(0).html(e.parseContent());
+                    console.log("preview")
+                    $.each($("#main .template:not(:first)"),function(i,n){
+                        if($(n).attr("data-id") == (tools.treeAdd.id || tools.treeModify.id)){
+                           $(n).html(e.parseContent(e.getContent()));
+                        }
+                    })
+                },
+                onSave:function(e){
+                    if(tools.addOrModify === "modify"){
+                        var modifyUpLoad = {};
+                        modifyUpLoad.id = tools.treeModify.id;
+                        modifyUpLoad.fatherId = tools.treeModify.fatherId;
+                        modifyUpLoad.context = e.getContent();
+                        modifyUpLoad.nodeName = tools.treeModify.name;
+                        modifyUpLoad.userId = 1111;
+                        modifyUpLoad.userName  = "admin";
+                        $.ajax({
+                            url:"http://localhost:8080/markdown/node/updateNode.do",
+                            data:modifyUpLoad,
+                            success:function(data){
+                                console.log(data)
+                            }
+                        })
+                    }else if(tools.addOrModify === "add"){
+                        var addUpLoad = {};
+                        addUpLoad.id = tools.treeAdd.id;
+                        addUpLoad.context = encodeURI(e.getContent());
+                        addUpLoad.nodeName = encodeURI($("#edit .title").val());
+                        addUpLoad.userId = 1111;
+                        addUpLoad.userName  = "admin";
+
+                        var addZtreeObj = $.fn.zTree.getZTreeObj("treeDemo");
+                        addUpLoad.fatherId = addZtreeObj.getNodesByFilter(function(node){
+                            return node.id == tools.treeAdd.id
+                        },true).getParentNode().id;
+                        console.log(addUpLoad)
+                        $.ajax({
+                            url:"http://localhost:8080/markdown/node/addNodes.do",
+                            data:addUpLoad,
+                            success:function(data){
+                                console.log(data)
+                            }
+                        })
+                    }
                 },
                 onChange: function(e) {
                     tools.setPreviewCount(e,$previewContainer)
@@ -302,7 +410,7 @@ var makeDom = {
                     }
                     var filename = typeof file !== 'undefined' ? file.name : '';
                     msgs.loading.hide();
-                    msgs.err.show().html('<span class="text-danger"><i class="fa fa-times"></i> 错误 上传 ' + filename + ' - ' + err + '</span>');
+                    msgs.err.show().html('<span class="text-danger"><i class="fa fa-times"></i> 上传失败 ' + filename + ' - ' + err + '</span>');
                 },
                 dragOver: function() {
                     $(this).addClass('active');
@@ -319,7 +427,7 @@ var makeDom = {
                     msgs.err.hide();
                 },
                 uploadFinished: function(i, file, response, time) {
-                    $md.val($md.val() + "![" + file.name + "](http://127.0.0.1:8080/markdown/img/"+file.name+")\n").trigger('change');
+                    $md.val($md.val() + "![" + file.name + "](http://127.0.0.1:8080/markdown/img/"+response+")\n").trigger('change');
                 }
             });
         },
