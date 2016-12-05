@@ -45,4 +45,10 @@ public interface INodeDao {
      * @return 所有子节点
      */
     List<NodeBean> findNodesByFather(int fid);
+
+    /**
+     * @param fid 父id
+     * @return 父id下最大的子id
+     */
+    int findParentNodeLastId(int fid);
 }

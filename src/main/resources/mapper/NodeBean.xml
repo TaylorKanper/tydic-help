@@ -49,4 +49,7 @@
     <select id="findNodesByFather" resultMap="nodeMap">
         SELECT * FROM  t_node WHERE f_id=#{fid}
     </select>
+    <select id="findParentNodeLastId" resultType="Integer">
+        SELECT id FROM t_node where f_id=#{fid} ORDER BY id DESC limit 0,1
+    </select>
 </mapper>

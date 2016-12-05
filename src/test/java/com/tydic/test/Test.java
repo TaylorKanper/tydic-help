@@ -1,5 +1,6 @@
 package com.tydic.test;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.util.List;
 
@@ -22,8 +23,9 @@ public class Test {
 	@org.junit.Test
 	public void test() {
 		try {
-//			insertNode();
-			delNode(2);
+			insertNode();
+//			delNode(2);
+//			changeToChinese();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -43,5 +45,15 @@ public class Test {
 	}
 	private void delNode(int id){
 		nodeService.delNode(id);
+	}
+	private String changeToChinese(){
+		String str = "%E6%97%A0%E6%A0%87%E9%A2%98.png";
+		String returnStr="";
+		try {
+			returnStr = new String(str.getBytes("ISO-8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return returnStr;
 	}
 }
