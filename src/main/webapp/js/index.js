@@ -345,18 +345,17 @@ var makeDom = {
                     }else if(tools.addOrModify === "add"){
                         var addUpLoad = {};
                         addUpLoad.id = tools.treeAdd.id;
-                        addUpLoad.context = encodeURI(e.getContent());
-                        addUpLoad.nodeName = encodeURI($("#edit .title").val());
+                        addUpLoad.context = e.getContent();
+                        addUpLoad.nodeName = $("#edit .title").val();
                         addUpLoad.userId = 1111;
                         addUpLoad.userName  = "admin";
-
                         var addZtreeObj = $.fn.zTree.getZTreeObj("treeDemo");
                         addUpLoad.fatherId = addZtreeObj.getNodesByFilter(function(node){
                             return node.id == tools.treeAdd.id
                         },true).getParentNode().id;
                         console.log(addUpLoad)
                         $.ajax({
-                            url:"http://localhost:8080/markdown/node/addNodes.do",
+                            url:"http://localhost:8080/markdown/node/addNode.do",
                             data:addUpLoad,
                             success:function(data){
                                 console.log(data)
