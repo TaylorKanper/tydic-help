@@ -74,8 +74,8 @@ public class NodeServiceImpl implements INodeService {
     public Response<Boolean> delNode(int id) {
         try {
             NodeBean bean = nodeDao.findNode(id);
-            int count = delNodes(bean, 0);
-            return count >= 1 ? Response.ok(true) : Response.ok(false);
+            boolean isDel = delNodes(bean);
+            return isDel ? Response.ok(true) : Response.ok(false);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
@@ -98,27 +98,24 @@ public class NodeServiceImpl implements INodeService {
     /**
      * 递归删除父节点下的所有节点
      *
-     * @param bean  节点实体
-     * @param count 删除标识
-     * @return 删除节点数
+     * @param bean 节点实体
+     * @return 是否删除节点
      */
-    private int delNodes(NodeBean bean, int count) {
+    private boolean delNodes(NodeBean bean) {
         List<NodeBean> list = nodeDao.findNodesByFather(bean.getId());
         if (list.size() == 0) {
             bean.setUpdateTime(new Date(System.currentTimeMillis()));
             bean.setEffective(-1);
             nodeDao.updateNode(bean);
-            count++;
-            return count;
+            return true;
         } else {
             for (NodeBean b : list) {
-                delNodes(b, count);//递归删除每一个节点
+                delNodes(b);//递归删除每一个节点
                 bean.setUpdateTime(new Date(System.currentTimeMillis()));
                 bean.setEffective(-1);
                 nodeDao.updateNode(bean);//删除该节点
-                count++;
             }
-            return count;
+            return true;
         }
     }
 }

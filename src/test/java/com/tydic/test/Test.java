@@ -23,7 +23,7 @@ public class Test {
 	public void test() {
 		try {
 //			insertNode();
-			delNode(3);
+			delNode(2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
