@@ -21,7 +21,7 @@ var tools = {
             for (var k = 0, lenk = serverData.data.length; k < lenk; k++) {
                 $.each($("#main .template:not(:first)"), function (kd, n) {
                     if ($(n).attr("data-id") == serverData.data[k].id) {
-                        $(n).html( tools.markDownEObj.parseContent(serverData.data[k].context))
+                        $(n).html(tools.markDownEObj.parseContent(serverData.data[k].context))
                     }
                 })
             }
@@ -32,6 +32,7 @@ var tools = {
     treeAdd:{},
     addOrModify:"modify",
     treeNodeCount:[],
+    preNode:"",
     modifyNodeName:function(){
         $("#edit .title").on("click",function(){
             var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
@@ -49,8 +50,6 @@ var tools = {
             data:{fid:id},
             method:"post",
             success:function(data){
-                console.log(data)
-                // makeDom.editBox(data);
                 for(var a = 0;a<data.data.length;a++){
                     var treeNodeCountObj = {};
                     treeNodeCountObj.id = data.data[a].id;
@@ -60,7 +59,10 @@ var tools = {
                         tools.ajaxGetCount(data)
                     }
                 }
-                //treeNode.icon = "";
+
+                if(treeNode?treeNode.isParent:false){
+                    treeNode.icon = "";
+                }
                 var displayDomId =0;
                 var treeOnClickObj = $.fn.zTree.getZTreeObj("treeDemo");
                 var isChildren = treeNode?treeNode:false;
@@ -84,7 +86,6 @@ var tools = {
                     }
                     displayDomId = getFirstNodeArray[0].id;//返回的id
                 }
-
                 $.each($("#main .template:not(:first)"),function(i,n){
                     if($(n).attr("data-id") == displayDomId){
                         $(n).show();
@@ -123,12 +124,17 @@ var makeTree = {
                 onRemove: onRemove,
                 onRename: onRename,
                 onClick:function(e,treeId, treeNode){
-                    console.log("0000000")
-                    console.log(treeNode)
+                    var displayDomId = 0;
+                    if(!treeNode.isParent){
+                        tools.preNode = treeNode.id;
+                        displayDomId = treeNode.id;
+                    }else{
+                        displayDomId = tools.preNode;
+                    }
                     $("#main").css({"border":"0"})
-                    var displayDomId = treeNode.id;
-                    var treeOnClickObj = $.fn.zTree.getZTreeObj("treeDemo");
-                    if(treeNode.children){
+
+                   // var treeOnClickObj = $.fn.zTree.getZTreeObj("treeDemo");
+                   /* if(treeNode.children){
                         var treeArr = treeOnClickObj.getNodesByParamFuzzy("tId","treeDemo",treeNode);
                         var getFirstNodeArray = [];
                         for(var i=0,len=treeArr.length;i<len;i++){
@@ -137,7 +143,7 @@ var makeTree = {
                             }
                         }
                         displayDomId = getFirstNodeArray[0].id;//返回的id
-                    }
+                    }*/
                     $.each($("#main .template:not(:first)"),function(i,n){
                             if($(n).attr("data-id") == displayDomId){
                                 $(n).show();
@@ -165,11 +171,12 @@ var makeTree = {
                 },
                 beforeExpand:function(treeId, treeNode){
                     $("#main").css({"border":"0"})
-                    treeNode.icon = "img/loading.gif";
+
                     if(treeNode.children){
                         var currentTree = treeNode.children;
                         for(var i=0,len=currentTree.length;i<len;i++){
                             if(!currentTree[i].isParent){
+                                treeNode.icon = "../img/loading.gif";
                                 tools.findNodeCount(treeNode.id,treeNode)
                                /* $.ajax({
                                     url:"http://localhost:8080/markdown/node/findNodesByFather.do",
@@ -294,7 +301,7 @@ var makeTree = {
             }if(!treeNode.isParent && treeNode.pId === null){
                 tools.treeModify.id = treeNode.id;
                 tools.treeModify.fatherId = 0;
-            }else{
+            }else if(tools.addOrModify != "add"){
                 tools.treeModify.id = treeNode.id;
                 tools.treeModify.fatherId = treeNode.getParentNode().id;
             }
@@ -336,8 +343,10 @@ var makeTree = {
                 $("#edit .title").val("");
                 var addNodes = treeNode.id+"1";
                 if(treeNode.isParent){
-                    addNodes = Number(treeNode.children[treeNode.children.length-1].id)+1
+                    addNodes = Number(treeNode.children[treeNode.children.length-1].id)+1;
+                    tools.treeAdd.isParent = true;
                 }else{
+                    tools.treeAdd.isParent = false;
                     var addNodes = treeNode.id+"1";
                 }
                 tools.treeAdd.id = addNodes;
@@ -350,7 +359,6 @@ var makeTree = {
                 $("#main").append(appendDom);
                 zTree.addNodes(treeNode, {id:(addNodes), pId:treeNode.id, name:"new node" + (newCount++)});
                 tools.addOrModify = "add";
-                console.log(tools.addOrModify)
                 $("#edit").show();
                 return false;
             });
@@ -429,7 +437,6 @@ var makeDom = {
             $("#main").append(dom)
         },
         editBox:function(serverData){
-            console.log("运行的次数")
             var $previewContainer = $('#comment-md-preview-container');
             $previewContainer.show();
             var $md = $("#comment-md").markdown({
@@ -450,8 +457,6 @@ var makeDom = {
                     }*/
                 },
                 onPreview: function(e) {//预览时
-                    console.log(e)
-
                     $("#edit").hide();
                     $("#inedit").show();
                     $.each($("#main .template:not(:first)"),function(i,n){
@@ -462,7 +467,6 @@ var makeDom = {
                    return e.getContent();
                 },
                 onSave:function(e){
-                    console.log(tools.addOrModify)
                     if(tools.addOrModify === "modify"){
                         var modifyUpLoad = {};
                         modifyUpLoad.id = Number(tools.treeModify.id);
@@ -471,7 +475,6 @@ var makeDom = {
                         modifyUpLoad.nodeName = $("#edit .title").val();
                         modifyUpLoad.userId = 1111;
                         modifyUpLoad.userName  = "admin";
-                        console.log(modifyUpLoad)
                         $.ajax({
                             url:"http://localhost:8080/markdown/node/updateNode.do",
                             data:modifyUpLoad,
@@ -488,10 +491,11 @@ var makeDom = {
                         addUpLoad.userId = 1111;
                         addUpLoad.userName  = "admin";
                         var addZtreeObj = $.fn.zTree.getZTreeObj("treeDemo");
-                        addUpLoad.fatherId = Number(addZtreeObj.getNodesByFilter(function(node){
+                        var addFatherNode = addZtreeObj.getNodesByFilter(function(node){
                             return node.id == tools.treeAdd.id
-                        },true).getParentNode().id);
-                        console.log(addUpLoad)
+                        },true).getParentNode();
+                        addUpLoad.fatherId = Number(addFatherNode.id);
+                        addUpLoad.hasChild = tools.treeAdd.isParent;
                         $.ajax({
                             url:"http://localhost:8080/markdown/node/addNode.do",
                             data:addUpLoad,
