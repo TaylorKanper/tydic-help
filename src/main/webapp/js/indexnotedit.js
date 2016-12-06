@@ -42,73 +42,15 @@ var tools = {
                 }
             })
         })
-    },
-    findNodeCount:function(id,treeNode){
-        $.ajax({
-            url:"http://localhost:8080/markdown/node/findNodesByFather.do",
-            data:{fid:id},
-            method:"post",
-            success:function(data){
-                console.log(data)
-                // makeDom.editBox(data);
-                for(var a = 0;a<data.data.length;a++){
-                    var treeNodeCountObj = {};
-                    treeNodeCountObj.id = data.data[a].id;
-                    treeNodeCountObj.count = data.data[a].context;
-                    tools.treeNodeCount.push(treeNodeCountObj);
-                    if(tools.markDownEObj){
-                        tools.ajaxGetCount(data)
-                    }
-                }
-                //treeNode.icon = "";
-                var displayDomId =0;
-                var treeOnClickObj = $.fn.zTree.getZTreeObj("treeDemo");
-                var isChildren = treeNode?treeNode:false;
-                if(isChildren?treeNode.children:false){
-                    var treeArr = treeOnClickObj.getNodesByParamFuzzy("tId","treeDemo",treeNode);
-                    var getFirstNodeArray = [];
-                    for(var i=0,len=treeArr.length;i<len;i++){
-                        if(!treeArr[i].isParent && treeArr[i].isFirstNode){
-                            getFirstNodeArray.push(treeArr[i])
-                        }
-                    }
-                    displayDomId = getFirstNodeArray[0].id;//返回的id
-                }else{
-                    var searchNodeParent = treeOnClickObj.getNodeByTId("treeDemo_1");
-                    var treeArr = treeOnClickObj.getNodesByParamFuzzy("tId","treeDemo",searchNodeParent);
-                    var getFirstNodeArray = [];
-                    for(var i=0,len=treeArr.length;i<len;i++){
-                        if(!treeArr[i].isParent && treeArr[i].isFirstNode){
-                            getFirstNodeArray.push(treeArr[i])
-                        }
-                    }
-                    displayDomId = getFirstNodeArray[0].id;//返回的id
-                }
-
-                $.each($("#main .template:not(:first)"),function(i,n){
-                    if($(n).attr("data-id") == displayDomId){
-                        $(n).show();
-                    }else{
-                        $(n).hide();
-                    }
-                });
-            }
-        })
     }
 };
 var makeTree = {
     makeT:function(){
         var setting = {
             view: {
-                addHoverDom: addHoverDom,
-                removeHoverDom: removeHoverDom,
                 selectedMulti: false
             },
             edit: {
-                enable: true,
-                editNameSelectAll: true,
-                showRemoveBtn: true,
-                showRenameBtn: true
             },
             data: {
                 simpleData: {
@@ -116,15 +58,7 @@ var makeTree = {
                 }
             },
             callback: {
-                beforeDrag: beforeDrag,
-                beforeEditName: beforeEditName,
-                beforeRemove: beforeRemove,
-                beforeRename: beforeRename,
-                onRemove: onRemove,
-                onRename: onRename,
                 onClick:function(e,treeId, treeNode){
-                    console.log("0000000")
-                    console.log(treeNode)
                     $("#main").css({"border":"0"})
                     var displayDomId = treeNode.id;
                     var treeOnClickObj = $.fn.zTree.getZTreeObj("treeDemo");
@@ -138,46 +72,45 @@ var makeTree = {
                         }
                         displayDomId = getFirstNodeArray[0].id;//返回的id
                     }
+
                     $.each($("#main .template:not(:first)"),function(i,n){
-                            if($(n).attr("data-id") == displayDomId){
-                                $(n).show();
-                            }else{
-                                $(n).hide();
-                            }
-                        });
+                        if($(n).attr("data-id") == displayDomId){
+                            $(n).show();
+                        }else{
+                            $(n).hide();
+                        }
+                    });
                     if(!treeNode.children && treeNode.pId === null){
-                                $.ajax({
-                                    url:"http://localhost:8080/markdown/node/findNode.do",
-                                    data:{id:treeNode.id},
-                                    method:"post",
-                                    success:function(data){
-                                        $.each($("#main .template:not(:first)"),function(i,n){
-                                            if($(n).attr("data-id") == data.data.id){
-                                                $(n).html(tools.markDownEObj.parseContent(data.data.context));
-                                                $(n).show();
-                                            }else{
-                                                $(n).hide();
-                                            }
-                                        })
+                        $.ajax({
+                            url:"http://localhost:8080/markdown/node/findNode.do",
+                            data:{id:treeNode.id},
+                            method:"post",
+                            success:function(data){
+                                $.each($("#main .template:not(:first)"),function(i,n){
+                                    if($(n).attr("data-id") == data.data.id){
+                                        $(n).html(tools.markDownEObj.parseContent(data.data.context));
+                                        $(n).show();
+                                    }else{
+                                        $(n).hide();
                                     }
                                 })
-                        }
+                            }
+                        })
+                    }
                 },
                 beforeExpand:function(treeId, treeNode){
-                    $("#main").css({"border":"0"})
                     treeNode.icon = "img/loading.gif";
                     if(treeNode.children){
                         var currentTree = treeNode.children;
                         for(var i=0,len=currentTree.length;i<len;i++){
                             if(!currentTree[i].isParent){
-                                tools.findNodeCount(treeNode.id,treeNode)
-                               /* $.ajax({
+                                $.ajax({
                                     url:"http://localhost:8080/markdown/node/findNodesByFather.do",
                                     data:{fid:treeNode.id},
                                     method:"post",
                                     success:function(data){
                                         console.log(data)
-                                       // makeDom.editBox(data);
+                                        // makeDom.editBox(data);
                                         for(var a = 0;a<data.data.length;a++){
                                             var treeNodeCountObj = {};
                                             treeNodeCountObj.id = data.data[a].id;
@@ -187,29 +120,9 @@ var makeTree = {
                                                 tools.ajaxGetCount(data)
                                             }
                                         }
-                                        treeNode.icon = "";
-                                        var displayDomId = treeNode.id;
-                                        var treeOnClickObj = $.fn.zTree.getZTreeObj("treeDemo");
-                                        if(treeNode.children){
-                                            var treeArr = treeOnClickObj.getNodesByParamFuzzy("tId","treeDemo",treeNode);
-                                            var getFirstNodeArray = [];
-                                            for(var i=0,len=treeArr.length;i<len;i++){
-                                                if(!treeArr[i].isParent && treeArr[i].isFirstNode){
-                                                    getFirstNodeArray.push(treeArr[i])
-                                                }
-                                            }
-                                            displayDomId = getFirstNodeArray[0].id;//返回的id
-                                        }
-
-                                        $.each($("#main .template:not(:first)"),function(i,n){
-                                            if($(n).attr("data-id") == displayDomId){
-                                                $(n).show();
-                                            }else{
-                                                $(n).hide();
-                                            }
-                                        });
+                                        treeNode.icon = ""
                                     }
-                                })*/
+                                })
                                 break;
                             }else{
                                 break;
@@ -219,149 +132,7 @@ var makeTree = {
                 }
             }
         };
-        var log, className = "dark";
-        function beforeDrag(treeId, treeNodes) {
-            return true;
-        }
-        function beforeEditName(treeId, treeNode) {
-            className = (className === "dark" ? "":"dark");
-            showLog("[ "+getTime()+" beforeEditName ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
-            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
-            zTree.selectNode(treeNode);
-            setTimeout(function() {
-                if (confirm("您确定要对 '" + treeNode.name + "'节点进行修改吗?")) {
-                    setTimeout(function() {
-                        zTree.editName(treeNode);
-                        $("#edit").show();
-                    }, 0);
-                }
-            }, 0);
-            return false;
-        }
-        function beforeRemove(treeId, treeNode) {
-            className = (className === "dark" ? "":"dark");
-            showLog("[ "+getTime()+" beforeRemove ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
-            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
-            zTree.selectNode(treeNode);
-            var removeBool = confirm("您确定要删除 '" + treeNode.name + "'节点吗?");
-            if(removeBool){
-                $.each($("#main .template:not(:first)"),function(i,n){
-                    if($(n).attr("data-id") == treeNode.id){
-                        $(n).detach();
-                    }
-                })
-               $.ajax({
-                   url:"http://localhost:8080/markdown/node/delNode.do",
-                   data:{id:treeNode.id},
-                   method:"post",
-                   success:function(data){
-                        alert(data.msg)
-                   }
-               })
-            }
-            return removeBool;
-        }
-        function onRemove(e, treeId, treeNode) {
-            showLog("[ "+getTime()+" onRemove ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
-        }
-        function beforeRename(treeId, treeNode, newName, isCancel) {
-            className = (className === "dark" ? "":"dark");
-            showLog((isCancel ? "<span style='color:red'>":"") + "[ "+getTime()+" beforeRename ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name + (isCancel ? "</span>":""));
-            if (newName.length == 0) {
-                setTimeout(function() {
-                    var zTree = $.fn.zTree.getZTreeObj("treeDemo");
-                    zTree.cancelEditName();
-                    console.log("Node name can not be empty.");
-                }, 0);
-                return false;
-            }
-            return true;
-        }
-        function onRename(e, treeId, treeNode, isCancel) {
-            showLog((isCancel ? "<span style='color:red'>":"") + "[ "+getTime()+" onRename ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name + (isCancel ? "</span>":""));
-            $("#edit .title").val(treeNode.name);
-            $.each($("#main .template:not(:first)"),function(i,n){
-                if($(n).attr("data-id") == treeNode.id){
-                    tools.treeModify.count = $(n).html();
-                };
-            })
-            if(treeNode.isParent && treeNode.pId != null){
-                tools.treeModify.id = treeNode.id;
-                tools.treeModify.fatherId = treeNode.getParentNode().id;
-            }else if(treeNode.isParent && treeNode.pId === null){
-                tools.treeModify.id = treeNode.id;
-                tools.treeModify.fatherId = 0;
-            }if(!treeNode.isParent && treeNode.pId === null){
-                tools.treeModify.id = treeNode.id;
-                tools.treeModify.fatherId = 0;
-            }else{
-                tools.treeModify.id = treeNode.id;
-                tools.treeModify.fatherId = treeNode.getParentNode().id;
-            }
-            tools.addOrModify != "add"?tools.addOrModify = "modify":tools.addOrModify = "add";
-            if(tools.addOrModify === "modify"){
-                $.each(tools.treeNodeCount,function(i,n){
-                    if(n.id === tools.treeModify.id){
-                        tools.markDownEObj.setContent(n.count)
-                    }
-                })
-            }
-        };
-        function showLog(str) {
-            if (!log) log = $("#log");
-            log.append("<li class='"+className+"'>"+str+"</li>");
-            if(log.children("li").length > 8) {
-                log.get(0).removeChild(log.children("li")[0]);
-            }
-        };
-        function getTime() {
-            var now= new Date(),
-                h=now.getHours(),
-                m=now.getMinutes(),
-                s=now.getSeconds(),
-                ms=now.getMilliseconds();
-            return (h+":"+m+":"+s+ " " +ms);
-        }
-        var newCount = 1;
-        function addHoverDom(treeId, treeNode) {
-            $("#treeDemo").scrollLeft($("#treeDemo").outerWidth())
-            var sObj = $("#" + treeNode.tId + "_span");
-            if (treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length>0) return;
-            var addStr = "<span class='button add' id='addBtn_" + treeNode.tId
-                + "' title='add node' onfocus='this.blur();'></span>";
-            sObj.after(addStr);
-            var btn = $("#addBtn_"+treeNode.tId);
-            if (btn) btn.bind("click", function(){
-                $("#comment-md").val("");
-                $("#edit .title").val("");
-                var addNodes = treeNode.id+"1";
-                if(treeNode.isParent){
-                    addNodes = Number(treeNode.children[treeNode.children.length-1].id)+1
-                }else{
-                    var addNodes = treeNode.id+"1";
-                }
-                tools.treeAdd.id = addNodes;
-                var zTree = $.fn.zTree.getZTreeObj("treeDemo");
-                $("#main .template").hide();
-                var appendDom = $("#main .template:first").clone(true);
-                appendDom.attr("data-id",(addNodes));
-                appendDom.text("new node" + (newCount));
-                appendDom.show().siblings().hide();
-                $("#main").append(appendDom);
-                zTree.addNodes(treeNode, {id:(addNodes), pId:treeNode.id, name:"new node" + (newCount++)});
-                tools.addOrModify = "add";
-                console.log(tools.addOrModify)
-                $("#edit").show();
-                return false;
-            });
-        };
-        function removeHoverDom(treeId, treeNode) {
-            $("#addBtn_"+treeNode.tId).unbind().remove();
-        };
-        function selectAll() {
-            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
-            zTree.setting.edit.editNameSelectAll =  $("#selectAll").attr("checked");
-        };
+
     var zNodes =[//ztree的数据格式
         /*{ id:1, pId:0, name:"概述", open:true},
         { id:111, pId:1, name:"封面"},
@@ -400,7 +171,9 @@ var makeTree = {
         url:"http://localhost:8080/markdown/node/findAllNodes.do",
         method:"post",
         success: function(data){
+            console.log(data)
             var server = data.data;
+            console.log(data)
             for(var i=0,len=server.length;i<len;i++){
                 var treeObj = {};
                 treeObj.id = server[i].id;
@@ -410,7 +183,6 @@ var makeTree = {
                 zNodes.push(treeObj);
              }
             var treeObj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
-            tools.findNodeCount(1)
         }
     })
 },
@@ -441,6 +213,8 @@ var makeDom = {
                 disabledButtons:[],
                 onShow: function(e) {
                     tools.markDownEObj = e;
+                    console.log(e)
+                    console.log("是否触发show")
                     e.change(e);
                   // tools.ajaxGetCount(serverData)
                     tools.setPreviewCount(e,$previewContainer);
@@ -456,48 +230,46 @@ var makeDom = {
                     $("#inedit").show();
                     $.each($("#main .template:not(:first)"),function(i,n){
                         if($(n).attr("data-id") == (tools.treeAdd.id || tools.treeModify.id)){
-                           $(n).html($("#comment-md-preview").html());
+                           $(n).html(e.parseContent(e.getContent()));
                         }
                     })
                    return e.getContent();
                 },
                 onSave:function(e){
-                    console.log(tools.addOrModify)
                     if(tools.addOrModify === "modify"){
                         var modifyUpLoad = {};
-                        modifyUpLoad.id = Number(tools.treeModify.id);
-                        modifyUpLoad.fatherId = Number(tools.treeModify.fatherId);
+                        modifyUpLoad.id = tools.treeModify.id;
+                        modifyUpLoad.fatherId = tools.treeModify.fatherId;
                         modifyUpLoad.context = e.getContent();
-                        modifyUpLoad.nodeName = $("#edit .title").val();
+                        modifyUpLoad.nodeName = tools.treeModify.name;
                         modifyUpLoad.userId = 1111;
                         modifyUpLoad.userName  = "admin";
-                        console.log(modifyUpLoad)
                         $.ajax({
                             url:"http://localhost:8080/markdown/node/updateNode.do",
                             data:modifyUpLoad,
                             method:"post",
                             success:function(data){
-                                alert(data.msg)
+                                console.log(data)
                             }
                         })
                     }else if(tools.addOrModify === "add"){
                         var addUpLoad = {};
-                        addUpLoad.id = Number(tools.treeAdd.id);
+                        addUpLoad.id = tools.treeAdd.id;
                         addUpLoad.context = e.getContent();
                         addUpLoad.nodeName = $("#edit .title").val();
                         addUpLoad.userId = 1111;
                         addUpLoad.userName  = "admin";
                         var addZtreeObj = $.fn.zTree.getZTreeObj("treeDemo");
-                        addUpLoad.fatherId = Number(addZtreeObj.getNodesByFilter(function(node){
+                        addUpLoad.fatherId = addZtreeObj.getNodesByFilter(function(node){
                             return node.id == tools.treeAdd.id
-                        },true).getParentNode().id);
+                        },true).getParentNode().id;
                         console.log(addUpLoad)
                         $.ajax({
                             url:"http://localhost:8080/markdown/node/addNode.do",
                             data:addUpLoad,
                             method:"post",
                             success:function(data){
-                                alert(data.msg)
+                                console.log(data)
                             }
                         })
                     }
@@ -568,6 +340,7 @@ var makeDom = {
                     msgs.err.hide();
                 },
                 uploadFinished: function(i, file, response, time) {
+                    console.log("图片上传次数")
                     $md.val($md.val() + "![" + file.name + "](http://127.0.0.1:8080/markdown/img/"+response+")\n").trigger('change');
                 }
             });

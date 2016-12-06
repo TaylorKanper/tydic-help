@@ -9,23 +9,24 @@ a:visited { color:#666; }
 a:hover, a:active, a:focus { color:#ff8400; text-decoration:underline; }
 .left{float:left;}
 .displaynone{display:none;}
-#tree{width:155px;height:700px;padding-left:5px;position:fixed;}
+#treeDemo{width:217px;height:735px;padding-left:5px;position:fixed;z-index:10;overflow: auto;border:5px solid #cccccc;}
 .ztree li span.button.add {margin-left:2px; margin-right: -1px; background-position:-144px 0; vertical-align:top; *vertical-align:middle}
-#main{width:1200px;height:700px;background-color:#cfcfcf;position:fixed;left:210px;overflow-y: hidden;}
-#main .template{position:absolute;top:0;left:0;width:1200px;overflow: hidden;overflow-y: auto;}
+#main{width:1300px;height:735px;position:fixed;left:217px;overflow-y: hidden;z-index:1;border:5px solid #3c3c3c;}
+#main .template{position:absolute;top:0;left:0;width:1300px;overflow: hidden;overflow-y: auto;display:none;}
+.template{height:735px;position:absolute;top:0;left:0;z-index:1;}
 #wrap{width:45px;height:61px;background-color:#FFE6B0;position:absolute;}
-.template{width:1200px;height:700px;background-color:limegreen;position:absolute;top:0;left:0;z-index:1;}
 #wrap li:hover{background-color:#c6c7c8;cursor:pointer;}
-#edit{width:1201px;height:605px;background-color:#cccccc;position:absolute;top:0;left:102px;bottom:0;right:0;margin:auto;display: none;}
+#edit{width:1201px;height:615px;background-color:#cccccc;position:absolute;top:0;left:225px;bottom:0;right:0;margin:auto;display: none;z-index:11;}
 #inedit{width:100px;height:30px;position:fixed;right:20px;top:5px;text-align:center;line-height:30px;font-size:20px;font-weight: 600;border-color: #2e6da4;box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);border-radius: 5px; background-color:#337ab7;z-index:10;display: none;}
 /*------------------编辑器--------------*/
-#comment-md-preview-container{width:600px;position:absolute;top:39px;right:15px;overflow: hidden;overflow-y:auto;height:565px;}
-#comment-md-preview{width:600px;height:565px;}
+#comment-md-preview-container{width:600px;position:absolute;top:39px;right:15px;overflow: hidden;overflow-y:auto;height:577px;}
+#comment-md-preview{width:600px;height:577px;}
 #edit .drop-out{width:100px;height:30px;position:absolute;right:20px;top:5px;text-align:center;line-height:30px;font-size:20px;font-weight: 600;border-color: #2e6da4;box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);border-radius: 5px; background-color:#337ab7;}
 #edit .well{padding:0;margin:0;border-color: #66afe9;box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);}
 #edit .btn-input{color:#337ab7;}
 #edit .title{height:39px;width:300px;font-size:20px;}
 #edit .text-danger{position:absolute;left:285px;}
+#edit .md-preview{overflow: auto;overflow-y:auto;}
 .md-editor.active {
     border-color: #66afe9;
     outline: 0;

@@ -374,7 +374,7 @@
             '" data-handler="' +
             saveHandler +
             '"><i class="icon icon-white icon-ok"></i> ' +
-            this.__localize('Save') +
+            this.__localize('保存') +
             '</button>');
 
 
@@ -582,7 +582,7 @@
       replacementContainer.css({
         "width": container.outerWidth() + 'px',
         "min-height": container.outerHeight() + 'px',
-        "height": "auto"
+        "height": "465"
       });
 
       if (this.$options.resize) {
@@ -769,7 +769,6 @@
           el.removeAttr('disabled');
         });
       });
-
       return this;
     },
     disableButtons: function(name) {
@@ -778,7 +777,7 @@
 
       $.each(buttons, function(i, v) {
         that.__alterButtons(buttons[i], function(el) {
-          el.attr('disabled', 'disabled');
+          el.attr('disabled', 'true');
         });
       });
 
@@ -1388,7 +1387,7 @@
           toggle: true,
           hotkey: 'Ctrl+P',
           title: 'Preview',
-          btnText: 'Preview',
+          btnText: '预览',
           btnClass: 'btn btn-primary btn-sm',
           icon: {
             glyph: 'glyphicon glyphicon-search',
