@@ -1,6 +1,7 @@
 /**
  * Created by xiaocai on 2016/11/14.
  */
+var ROOT = "http://133.37.31.189/markdown/";
 $(function(){
     makeTree.makeT();
     makeTree.makeTreeOther();
@@ -44,7 +45,7 @@ var tools = {
     },
     findNodeCount:function(id,treeNode){
         $.ajax({
-            url:"http://localhost:8080/markdown/node/findNodesByFather.do",
+            url:ROOT+"node/findNodesByFather.do",
             data:{fid:id},
             method:"post",
             success:function(data){
@@ -151,7 +152,7 @@ var makeTree = {
                     });
                     if(!treeNode.children && treeNode.pId === null){
                         $.ajax({
-                            url:"http://localhost:8080/markdown/node/findNode.do",
+                            url:ROOT+"node/findNode.do",
                             data:{id:treeNode.id},
                             method:"post",
                             success:function(data){
@@ -255,7 +256,7 @@ var makeTree = {
                     }
                 })
                 $.ajax({
-                    url:"http://localhost:8080/markdown/node/delNode.do",
+                    url:ROOT+"node/delNode.do",
                     data:{id:treeNode.id},
                     method:"post",
                     success:function(data){
@@ -369,7 +370,7 @@ var makeTree = {
              { id:3, pId:0, name:"结语", isParent:true}*/
         ];
         $.ajax({
-            url:"http://localhost:8080/markdown/node/findAllNodes.do",
+            url:ROOT+"node/findAllNodes.do",
             method:"post",
             success: function(data){
                 var server = data.data;
@@ -437,7 +438,7 @@ var makeDom = {
                     modifyUpLoad.userName  = "admin";
                     console.log(modifyUpLoad)
                     $.ajax({
-                        url:"http://localhost:8080/markdown/node/updateNode.do",
+                        url:ROOT+"node/updateNode.do",
                         data:modifyUpLoad,
                         method:"post",
                         success:function(data){
@@ -459,7 +460,7 @@ var makeDom = {
                     console.log(addUpLoad)
                     addUpLoad.hasChild = tools.treeAdd.isParent;
                     $.ajax({
-                        url:"http://localhost:8080/markdown/node/addNode.do",
+                        url:ROOT+"node/addNode.do",
                         data:addUpLoad,
                         method:"post",
                         success:function(data){
