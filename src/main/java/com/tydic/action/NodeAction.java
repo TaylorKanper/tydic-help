@@ -91,12 +91,13 @@ public class NodeAction {
      * 添加子节点
      *
      * @param bean 叶子节点实体
+     * @param hasChild 是否有子节点
      * @return 是否添加成功
      */
     @RequestMapping("/addNode")
     @ResponseBody
-    public ActionResult addNode(NodeBean bean) {
-        Response<Boolean> response = nodeService.insertNode(bean);
+    public ActionResult addNode(NodeBean bean,boolean hasChild) {
+        Response<Boolean> response = nodeService.insertNode(bean,hasChild);
         if (response.isOk()) {
             return ActionResult.success("添加成功");
         } else {

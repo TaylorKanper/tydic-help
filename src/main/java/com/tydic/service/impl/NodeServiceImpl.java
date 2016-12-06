@@ -45,10 +45,15 @@ public class NodeServiceImpl implements INodeService {
     }
 
     @Override
-    public Response<Boolean> insertNode(NodeBean bean) {
+    public Response<Boolean> insertNode(NodeBean bean, boolean hasChild) {
         try {
-            int id = nodeDao.findParentNodeLastId(bean.getFatherId());
-            bean.setId(++id);
+            int id = bean.getId();
+            if (hasChild) {
+                id = nodeDao.findParentNodeLastId(bean.getFatherId());
+                bean.setId(++id);
+            }else{
+                bean.setId(id * 10 + 1);
+            }
             bean.setInsertTime(new Date(System.currentTimeMillis()));
             bean.setEffective(1);
             return nodeDao.insertNode(bean) >= 1 ? Response.ok(true) : Response.ok(false);

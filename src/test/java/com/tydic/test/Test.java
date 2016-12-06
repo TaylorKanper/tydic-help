@@ -36,11 +36,11 @@ public class Test {
 		NodeBean bean = new NodeBean();
 		bean.setContext("##hello");
 		bean.setEffective(1);
-		bean.setFatherId(1);
+		bean.setFatherId(126);
 		bean.setInsertTime(new Date(System.currentTimeMillis()));
 		bean.setUserId(1);
 		bean.setUserName("admin");
-		Response<Boolean> res = nodeService.insertNode(bean);
+		Response<Boolean> res = nodeService.insertNode(bean,false);
 		System.out.print(res);
 	}
 	private void delNode(int id){

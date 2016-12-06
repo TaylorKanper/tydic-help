@@ -28,10 +28,11 @@ public interface INodeService {
     /**
      * 向数据库插入节点
      *
-     * @param bean 节点实体
+     * @param bean     节点实体
+     * @param hasChild 是否有子节点
      * @return 是否插入成功
      */
-    Response<Boolean> insertNode(NodeBean bean);
+    Response<Boolean> insertNode(NodeBean bean, boolean hasChild);
 
     /**
      * 根据实体中的id修改叶子节点
@@ -51,6 +52,7 @@ public interface INodeService {
 
     /**
      * 根据父节点id查找该父节点下所有的子节点，不包括子节点下的根子节点，即只查询一级
+     *
      * @param fid 父节点id
      * @return 子节点集合
      */
