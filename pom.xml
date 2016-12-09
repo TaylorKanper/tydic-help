@@ -222,7 +222,7 @@
 
     </dependencies>
     <build>
-        <finalName>product</finalName>
+        <finalName>markdown</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

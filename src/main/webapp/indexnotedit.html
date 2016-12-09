@@ -3,20 +3,11 @@
 <head>
     <meta charset="UTF-8" content="text/html" http-equiv="Content-Type">
     <title>大数据平台操作手册</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/bootstrap-markdown.min.css">
-    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/zTreeStyle.css">
     <link rel="stylesheet" href="css/index.css">
-
     <script src="js/plug/jquery.js"></script>
-    <script src="js/plug/bootstrap.min.js"></script>
-    <script src="js/plug/bootstrap-markdown.js"></script>
-    <script src="js/plug/markdown.js"></script>
-    <script src="js/plug/jquery.filedrop.js"></script>
-    <script src="js/plug/jquery.hotkeys.js"></script>
     <script src="js/plug/jquery.ztree.all-3.5.min.js"></script>
-    <script src="js/indexnotedit.js"></script>
+    <script src="js/plug/jquery.blockUI.js"></script>
 </head>
 <body>
 <!-- <div id="tree" class="left ztree"></div>-->
@@ -27,23 +18,12 @@
     <ul id="treeDemo" class="ztree"></ul>
 </div>
 <div id="main" class="left">
-    <div class="template"></div>
-    <button id="inedit">继续编辑</button>
+    <div class="template">请切换到子节点</div>
 </div>
-<div id="edit">
-    <div class="row">
-        <div class="col-md-12">
-            <input class="title" type="text" placeholder="请输入标题">
-            <button class="drop-out">退出</button>
-            <textarea id="comment-md" name="comment" placeholder="请输入您需要编辑的内容"></textarea>
-            <div id="comment-md-preview-container">
-                <div class="well well-sm well-light md-preview margin-top-10" id="comment-md-preview"></div>
-            </div>
-        </div>
-    </div>
 </div>
 </body>
-<script>
-
-</script>
+<script type="text/javascript" charset="utf-8" src="ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="ueditor/ueditor.all.min.js"> </script>
+<script type="text/javascript" charset="utf-8" src="ueditor/lang/zh-cn/zh-cn.js"></script>
+<script src="js/indexnotedit.js"></script>
 </html>
